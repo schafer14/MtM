@@ -2,27 +2,19 @@ package board
 
 import (
 	"github.com/schafer14/chess/move"
-	"github.com/schafer14/chess/util"
 )
 
-// MoveSteam returns a channel of moves that contains all the
-// legal moves in a given position.
-func (b Board) MoveStream() <-chan move.Move32 {
-	return util.MergeMoveStreams(
-		b.pawnMoves(),
-		b.knightMoves(),
-		b.bishopMoves(),
-		b.rookMoves(),
-		b.queenMoves(),
-		b.kingMoves(),
-	)
-}
+// Moves generates a list of legal moves in a position
+func (b Board) Moves() []move.Move32 {
+	moves := make([]move.Move32, 0, 256)
 
-func (b Board) Moves() (moves []move.Move32) {
-	moveStream := b.MoveStream()
-	for move := range moveStream {
-		moves = append(moves, move)
-	}
+	b.pawnMoves(&moves)
+	b.knightMoves(&moves)
+	b.bishopMoves(&moves)
+	b.rookMoves(&moves)
+	b.queenMoves(&moves)
+	b.kingMoves(&moves)
+
 	return moves
 }
 

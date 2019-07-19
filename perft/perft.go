@@ -14,14 +14,15 @@ type moveCount struct {
 }
 
 func main() {
+	d := 5
 	b := board.New()
 
 	t := time.Now()
-	x := Perft(b, 5)
+	x := Perft(b, d)
 	e := time.Since(t)
 	fmt.Printf("perft: %v, time: %v\n", x, e)
 
-	PrintDivide(b, 5)
+	PrintDivide(b, d)
 }
 
 func PrintDivide(b board.Board, depth int) {
@@ -38,7 +39,7 @@ func PrintDivide(b board.Board, depth int) {
 func Divide(b board.Board, depth int) []moveCount {
 	moves := make([]moveCount, 0, 256)
 
-	for move := range b.MoveStream() {
+	for _, move := range b.Moves() {
 		nb := b.Clone()
 		nb.Move(move)
 		moves = append(moves, moveCount{move: move, count: Perft(nb, depth-1)})
@@ -48,6 +49,10 @@ func Divide(b board.Board, depth int) []moveCount {
 }
 
 func Perft(b board.Board, depth int) int {
+	if depth < 1 {
+		return 1
+	}
+
 	if depth == 1 {
 		return len(b.Moves())
 	}
