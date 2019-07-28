@@ -43,21 +43,10 @@ func TestRookMoves(t *testing.T) {
 		var moves []move.Move32
 		board := FromFen(tt.fen)
 
-		moveStream := board.rookMoves()
-
-		for move := range moveStream {
-			moves = append(moves, move)
-		}
+		board.rookMoves(&moves)
 
 		if len(moves) != tt.numMoves {
 			t.Errorf("%v expected %v rook moves but got %v", tt.fen, tt.numMoves, len(moves))
 		}
-	}
-}
-
-func BenchmarkRook(b *testing.B) {
-	board := New()
-	for i := 0; i < b.N; i++ {
-		board.rookMoves()
 	}
 }

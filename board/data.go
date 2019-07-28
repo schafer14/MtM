@@ -12,6 +12,8 @@ type Board struct {
 	enPassant uint
 }
 
+var cols = []string{"a", "b", "c", "d", "e", "f", "g", "h"}
+
 var initialBoard Board = Board{
 	turn:      common.White,
 	castling:  [4]bool{true, true, true, true},

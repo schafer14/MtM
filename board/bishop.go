@@ -34,3 +34,19 @@ func (b Board) bishopMoves(movesSlice *[]move.Move32) {
 	}
 
 }
+
+func (b Board) bishopAttacks(turn uint) (attackSpace uint64) {
+	occ := b.colors[0] | b.colors[1]
+	friendlies := b.colors[turn]
+	allBishops := b.pieces[common.Bishop] & friendlies
+
+	for bishops := allBishops; bishops != 0; bishops &= bishops - 1 {
+		squareNum := common.FirstOne(bishops)
+
+		blocker := occ & bishopMagic[squareNum].mask
+		index := (blocker * bishopMagic[squareNum].magic) >> 55
+		attackSpace |= bishopMagicMoves[squareNum][index]
+	}
+
+	return attackSpace
+}

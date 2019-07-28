@@ -3,7 +3,6 @@ package board
 import (
 	"testing"
 
-	"github.com/schafer14/chess/common"
 	"github.com/schafer14/chess/move"
 )
 
@@ -32,27 +31,10 @@ func TestKnightMoves(t *testing.T) {
 		var moves []move.Move32
 		board := FromFen(tt.fen)
 
-		moveStream := board.knightMoves()
-
-		for move := range moveStream {
-			moves = append(moves, move)
-		}
+		board.knightMoves(&moves)
 
 		if len(moves) != tt.numMoves {
 			t.Errorf("%v expected %v knight moves but got %v", tt.fen, tt.numMoves, len(moves))
 		}
-	}
-}
-
-func BenchmarkFirst(b *testing.B) {
-	for i := 0; i < b.N; i++ {
-		common.FirstOne(0xB000000000000000)
-	}
-}
-
-func BenchmarkKnight(b *testing.B) {
-	board := New()
-	for i := 0; i < b.N; i++ {
-		board.knightMoves()
 	}
 }

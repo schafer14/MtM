@@ -1,11 +1,32 @@
 package board
 
 import (
+	"github.com/schafer14/chess/common"
 	"github.com/schafer14/chess/move"
 )
 
 // Moves generates a list of legal moves in a position
 func (b Board) Moves() []move.Move32 {
+	// TODO optimise this when there is interent
+	moves := make([]move.Move32, 0, 256)
+
+	for _, move := range b.PsudoMoves() {
+		// Optimsie this when the undo move func is done
+		test := b.Clone()
+		test.Move(move)
+		king := test.colors[test.opp()] & test.pieces[common.King]
+		oppAttack := test.attackSpace(test.turn)
+
+		if oppAttack&king == 0 {
+			moves = append(moves, move)
+		}
+	}
+
+	return moves
+}
+
+// Generates a list of moves without checking for moving into check
+func (b Board) PsudoMoves() []move.Move32 {
 	moves := make([]move.Move32, 0, 256)
 
 	b.pawnMoves(&moves)
@@ -17,9 +38,6 @@ func (b Board) Moves() []move.Move32 {
 
 	return moves
 }
-
-// Undo reverts the board to the state previous to the move.
-func (b *Board) Undo(move move.Move32) {}
 
 // Clone duplicates a chess board.
 func (b Board) Clone() Board {
@@ -40,7 +58,18 @@ func Empty() Board {
 // FromFen creates a new board from a fenstring.
 var FromFen = fromFen
 
-// ReadMove reads a string input into a move given a board position
-func (b Board) ReadMove(moveString string) move.Move32 {
-	return move.Move32(0)
+func (b *Board) applyMoves(moves []string) {
+	for _, moveStr := range moves {
+		move, _ := b.MoveFromSrcDestNotation(moveStr)
+		b.Move(move)
+	}
+}
+
+func (b Board) attackSpace(turn uint) uint64 {
+	return b.pawnAttacks(turn) |
+		b.knightAttacks(turn) |
+		b.bishopAttacks(turn) |
+		b.rookAttacks(turn) |
+		b.queenAttacks(turn) |
+		b.kingAttacks(turn)
 }

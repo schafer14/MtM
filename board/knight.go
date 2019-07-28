@@ -29,3 +29,16 @@ func (b Board) knightMoves(movesSlice *[]move.Move32) {
 
 	}
 }
+
+func (b Board) knightAttacks(turn uint) (attackSpace uint64) {
+	friendlies := b.colors[turn]
+	allKnights := b.pieces[common.Knight] & friendlies
+
+	for knights := allKnights; knights != 0; knights &= knights - 1 {
+		squareNum := common.FirstOne(knights)
+
+		attackSpace |= knightAttacks[squareNum]
+	}
+
+	return attackSpace
+}

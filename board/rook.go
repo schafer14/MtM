@@ -34,3 +34,19 @@ func (b Board) rookMoves(movesSlice *[]move.Move32) {
 	}
 
 }
+
+func (b Board) rookAttacks(turn uint) (attackSpace uint64) {
+	occ := b.colors[0] | b.colors[1]
+	friendlies := b.colors[turn]
+	allRooks := b.pieces[common.Rook] & friendlies
+
+	for rooks := allRooks; rooks != 0; rooks &= rooks - 1 {
+		squareNum := common.FirstOne(rooks)
+
+		blocker := occ & rookMagic[squareNum].mask
+		index := (blocker * rookMagic[squareNum].magic) >> 52
+		attackSpace |= rookMagicMoves[squareNum][index]
+	}
+
+	return attackSpace
+}

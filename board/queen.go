@@ -52,3 +52,26 @@ func (b Board) queenMoves(movesSlice *[]move.Move32) {
 	}
 
 }
+
+func (b Board) queenAttacks(turn uint) (attackSpace uint64) {
+	occ := b.colors[0] | b.colors[1]
+	friendlies := b.colors[turn]
+	allQueens := b.pieces[common.Queen] & friendlies
+
+	for Queens := allQueens; Queens != 0; Queens &= Queens - 1 {
+		squareNum := common.FirstOne(Queens)
+
+		// Stright Moves
+		blocker := occ & rookMagic[squareNum].mask
+		index := (blocker * rookMagic[squareNum].magic) >> 52
+		attackSpace |= rookMagicMoves[squareNum][index]
+
+		// Diagonal Moves
+		blocker2 := occ & bishopMagic[squareNum].mask
+		index2 := (blocker2 * bishopMagic[squareNum].magic) >> 55
+		attackSpace |= bishopMagicMoves[squareNum][index2]
+	}
+
+	return attackSpace
+
+}

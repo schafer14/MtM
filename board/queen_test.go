@@ -43,21 +43,10 @@ func TestQueenMoves(t *testing.T) {
 		var moves []move.Move32
 		board := FromFen(tt.fen)
 
-		moveStream := board.queenMoves()
-
-		for move := range moveStream {
-			moves = append(moves, move)
-		}
+		board.queenMoves(&moves)
 
 		if len(moves) != tt.numMoves {
 			t.Errorf("%v expected %v queen moves but got %v", tt.fen, tt.numMoves, len(moves))
 		}
-	}
-}
-
-func BenchmarkQueen(b *testing.B) {
-	board := FromFen("8/8/8/1Q6/1P6/8/8/8 w - - 0 1")
-	for i := 0; i < b.N; i++ {
-		board.queenMoves()
 	}
 }

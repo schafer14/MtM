@@ -6,13 +6,14 @@ import (
 )
 
 // Move updates the state of the board given a move.
-func (b *Board) Move(move move.Move32) {
+func (b *Board) Move(move move.Move32) (prev Board) {
 	// Init variables
 	opponent := b.opp()
 	src := uint64(1 << move.Src())
 	dest := uint64(1 << move.Dest())
 	piece := move.Piece()
 	isCap := move.IsCap()
+	prev = b.Clone()
 
 	// Clear old settings
 	b.enPassant = 0
@@ -28,21 +29,29 @@ func (b *Board) Move(move move.Move32) {
 		if b.turn == common.White && castleKing {
 			b.pieces[common.Rook] ^= 1 << 5
 			b.colors[common.White] ^= 1 << 5
+			b.pieces[common.Rook] ^= 1 << 7
+			b.colors[common.White] ^= 1 << 7
 		}
 
 		if b.turn == common.White && !castleKing {
 			b.pieces[common.Rook] ^= 1 << 3
 			b.colors[common.White] ^= 1 << 3
+			b.pieces[common.Rook] ^= 1
+			b.colors[common.White] ^= 1
 		}
 
 		if b.turn == common.Black && castleKing {
 			b.pieces[common.Rook] ^= 1 << 61
 			b.colors[common.Black] ^= 1 << 61
+			b.pieces[common.Rook] ^= 1 << 63
+			b.colors[common.Black] ^= 1 << 63
 		}
 
 		if b.turn == common.Black && !castleKing {
 			b.pieces[common.Rook] ^= 1 << 59
 			b.colors[common.Black] ^= 1 << 59
+			b.pieces[common.Rook] ^= 1 << 56
+			b.colors[common.Black] ^= 1 << 56
 		}
 	}
 
@@ -99,4 +108,6 @@ func (b *Board) Move(move move.Move32) {
 	}
 
 	b.turn = opponent
+
+	return
 }

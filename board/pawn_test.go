@@ -80,11 +80,11 @@ var pawnTests []pawnTest = []pawnTest{
 	},
 	// EnPassant
 	pawnTest{
-		fen:      "8/8/8/8/4p3/4P3/8/8 b KQkq e3 0 1",
+		fen:      "8/8/8/8/3p4/3P4/8/8 b KQkq e3 0 1",
 		numMoves: 1,
 	},
 	pawnTest{
-		fen:      "8/8/4p3/4P3/8/8/8/8 w KQkq c6 0 1",
+		fen:      "8/8/3p4/3P4/8/8/8/8 w KQkq c6 0 1",
 		numMoves: 1,
 	},
 }
@@ -94,21 +94,10 @@ func TestPawnMoves(t *testing.T) {
 		var moves []move.Move32
 		board := FromFen(tt.fen)
 
-		moveStream := board.pawnMoves()
-
-		for move := range moveStream {
-			moves = append(moves, move)
-		}
+		board.pawnMoves(&moves)
 
 		if len(moves) != tt.numMoves {
 			t.Errorf("%v expected %v pawn moves but got %v", tt.fen, tt.numMoves, len(moves))
 		}
-	}
-}
-
-func BenchmarkPanw(b *testing.B) {
-	board := New()
-	for i := 0; i < b.N; i++ {
-		board.pawnMoves()
 	}
 }

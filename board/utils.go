@@ -8,9 +8,11 @@ func (b Board) opp() uint {
 }
 
 func (b Board) pieceOn(sq uint) (bool, uint) {
-	for i := 0; i < 6; i++ {
-		if b.pieces[i]&(1<<sq) > 0 {
-			return true, uint(i)
+	if (b.colors[0]|b.colors[1])&(1<<sq) > 0 {
+		for i := 0; i < 6; i++ {
+			if b.pieces[i]&(1<<sq) > 0 {
+				return true, uint(i)
+			}
 		}
 	}
 

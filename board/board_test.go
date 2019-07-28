@@ -6,6 +6,33 @@ import (
 	"github.com/schafer14/chess/common"
 )
 
+func TestPromo(t *testing.T) {
+	b := FromFen("8/P7/8/k7/8/K7/8/8 w KQkq - 0 1")
+	if len(b.Moves()) != 7 {
+		t.Error("Promotion is not working")
+	}
+}
+
+func TestString(t *testing.T) {
+	board := New()
+	if board.String() != "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1" {
+		t.Errorf("Board.String() failing to create fen string got %v", board.String())
+	}
+
+	fen := "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1"
+	board = FromFen(fen)
+	if board.String() != fen {
+		t.Errorf("Fen %v failed to string got %v", fen, board.String())
+	}
+
+	fen = "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq h3 0 1"
+	board = FromFen(fen)
+	if board.String() != fen {
+		t.Errorf("Fen %v failed to string got %v", fen, board.String())
+	}
+
+}
+
 func TestMoves(t *testing.T) {
 	board := New()
 
@@ -119,7 +146,7 @@ func TestFromFen(t *testing.T) {
 				},
 				turn:      common.Black,
 				castling:  [4]bool{true, true, true, true},
-				enPassant: 21,
+				enPassant: 20,
 			},
 		},
 		fenTest{

@@ -37,12 +37,37 @@ func Mover(piece uint) func(uint) (func(uint) Move32, func(uint, uint) Move32) {
 	}
 }
 
+// New creates the basis for a new move
+func New(piece uint, src uint, dest uint) Move32 {
+	return Move32(src | dest<<6 | piece<<13)
+}
+
 func PawnQuiet(src uint, dest uint) Move32 {
 	return Move32(src | dest<<6 | common.Pawn<<13)
 }
 
 func (m Move32) SetCap(capSquare uint, capPiece uint) Move32 {
 	return Move32(uint(m) | capPiece<<16 | capSquare<<19 | 1<<25)
+}
+
+func (m Move32) SetCastleKing() Move32 {
+	return Move32(uint(m) | 1<<29)
+}
+
+func (m Move32) SetCastleQueen() Move32 {
+	return Move32(uint(m) | 1<<30)
+}
+
+func (m Move32) SetPromo(piece uint) Move32 {
+	return Move32(uint(m) | piece<<26)
+}
+
+func (m Move32) CastleKing() Move32 {
+	return Move32(uint(m) | 1<<29)
+}
+
+func (m Move32) CastleQueen() Move32 {
+	return Move32(uint(m) | 1<<30)
 }
 
 func (m Move32) Src() uint {
@@ -73,11 +98,17 @@ func (m Move32) Castle() (bool, bool) {
 	return uint(m)>>29&0x03 > 0, uint(m)>>29&0x01 > 0
 }
 
+var roce38StyleMoves bool = false
+
+func SetRoceMoves(isRoce bool) {
+	roce38StyleMoves = isRoce
+}
+
 func (m Move32) String() string {
 	chars := []rune{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}
-	pieces := []rune{'P', 'K', 'B', 'R', 'Q', 'K'}
+	pieces := []rune{'P', 'N', 'B', 'R', 'Q', 'K'}
 
-	if isPromo, promoPiece := m.Promotion(); isPromo {
+	if isPromo, promoPiece := m.Promotion(); isPromo && !roce38StyleMoves {
 		return fmt.Sprintf(
 			"%c%v%c%v%c",
 			chars[m.Src()%8],

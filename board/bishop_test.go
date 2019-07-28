@@ -39,11 +39,7 @@ func TestBishopMoves(t *testing.T) {
 		var moves []move.Move32
 		board := FromFen(tt.fen)
 
-		moveStream := board.bishopMoves()
-
-		for move := range moveStream {
-			moves = append(moves, move)
-		}
+		board.bishopMoves(&moves)
 
 		if len(moves) != tt.numMoves {
 			t.Errorf("%v expected %v bishop moves but got %v", tt.fen, tt.numMoves, len(moves))
@@ -51,9 +47,10 @@ func TestBishopMoves(t *testing.T) {
 	}
 }
 
-func BenchmarkBishop(b *testing.B) {
-	board := New()
+func BenchmarkBishopMoves(b *testing.B) {
+	var moves []move.Move32
+	board := FromFen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1")
 	for i := 0; i < b.N; i++ {
-		board.bishopMoves()
+		board.bishopMoves(&moves)
 	}
 }
