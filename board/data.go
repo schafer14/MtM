@@ -2,7 +2,36 @@ package board
 
 import (
 	"github.com/schafer14/chess/common"
+	"github.com/schafer14/chess/move"
 )
+
+type MoveList struct {
+	moves [256]move.Move32
+	head  int
+	tail  int
+}
+
+func (m *MoveList) Append(move move.Move32) {
+	m.moves[m.tail] = move
+	m.tail++
+}
+
+func (m *MoveList) Next() (bool, move.Move32) {
+	if m.head == m.tail {
+		return false, 0
+	}
+	m.head++
+	return true, m.moves[m.head-1]
+}
+
+func (m MoveList) Len() int {
+	return m.tail - m.head
+}
+
+func (m *MoveList) Reset() {
+	m.head = 0
+	m.tail = 0
+}
 
 type Board struct {
 	pieces    [6]uint64

@@ -8,7 +8,7 @@ import (
 
 func TestPromo(t *testing.T) {
 	b := FromFen("8/P7/8/k7/8/K7/8/8 w KQkq - 0 1")
-	if len(b.Moves()) != 7 {
+	if b.Moves().Len() != 7 {
 		t.Error("Promotion is not working")
 	}
 }
@@ -38,8 +38,8 @@ func TestMoves(t *testing.T) {
 
 	moves := board.Moves()
 
-	if len(moves) != 20 {
-		t.Errorf("Should be 20 moves available for first move got %v", len(moves))
+	if moves.Len() != 20 {
+		t.Errorf("Should be 20 moves available for first move got %v", moves.Len())
 	}
 }
 

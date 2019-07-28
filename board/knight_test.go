@@ -2,8 +2,6 @@ package board
 
 import (
 	"testing"
-
-	"github.com/schafer14/chess/move"
 )
 
 type knightTest struct {
@@ -28,13 +26,15 @@ var knightTests []knightTest = []knightTest{
 
 func TestKnightMoves(t *testing.T) {
 	for _, tt := range knightTests {
-		var moves []move.Move32
+		var moves MoveList
 		board := FromFen(tt.fen)
+
+		moves.Reset()
 
 		board.knightMoves(&moves)
 
-		if len(moves) != tt.numMoves {
-			t.Errorf("%v expected %v knight moves but got %v", tt.fen, tt.numMoves, len(moves))
+		if moves.Len() != tt.numMoves {
+			t.Errorf("%v expected %v knight moves but got %v", tt.fen, tt.numMoves, moves.Len())
 		}
 	}
 }

@@ -5,7 +5,7 @@ import (
 	"github.com/schafer14/chess/move"
 )
 
-func (b Board) knightMoves(movesSlice *[]move.Move32) {
+func (b Board) knightMoves(movesSlice *MoveList) {
 	friendlies := b.colors[b.turn]
 	allKnights := b.pieces[common.Knight] & friendlies
 	knightMover := move.Mover(common.Knight)
@@ -21,9 +21,9 @@ func (b Board) knightMoves(movesSlice *[]move.Move32) {
 			dest := common.FirstOne(legalMoves)
 			isCap, capPiece := b.pieceOn(dest)
 			if isCap {
-				*movesSlice = append(*movesSlice, capMover(dest, capPiece))
+				movesSlice.Append(capMover(dest, capPiece))
 			} else {
-				*movesSlice = append(*movesSlice, mover(dest))
+				movesSlice.Append(mover(dest))
 			}
 		}
 

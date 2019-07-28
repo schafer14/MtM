@@ -5,7 +5,7 @@ import (
 	"github.com/schafer14/chess/move"
 )
 
-func (b Board) kingMoves(movesSlice *[]move.Move32) {
+func (b Board) kingMoves(movesSlice *MoveList) {
 	friendlies := b.colors[b.turn]
 	allKings := b.pieces[common.King] & friendlies
 	kingMover := move.Mover(common.King)
@@ -23,9 +23,9 @@ func (b Board) kingMoves(movesSlice *[]move.Move32) {
 			dest := common.FirstOne(legalMoves)
 			isCap, capPiece := b.pieceOn(dest)
 			if isCap {
-				*movesSlice = append(*movesSlice, capMover(dest, capPiece))
+				movesSlice.Append(capMover(dest, capPiece))
 			} else {
-				*movesSlice = append(*movesSlice, mover(dest))
+				movesSlice.Append(mover(dest))
 			}
 		}
 
@@ -34,21 +34,21 @@ func (b Board) kingMoves(movesSlice *[]move.Move32) {
 	// Castle White does not work for chess 960
 	if b.turn == common.White && b.colors[common.White]&b.pieces[common.King] == 0x10 {
 		if 0x70&oppAttack == 0 && b.castling[0] && all&0x60 == 0 {
-			*movesSlice = append(*movesSlice, move.New(common.King, 4, 6).SetCastleKing())
+			movesSlice.Append(move.New(common.King, 4, 6).SetCastleKing())
 		}
 
 		if 0x1c&oppAttack == 0 && b.castling[1] && all&0x0e == 0 {
-			*movesSlice = append(*movesSlice, move.New(common.King, 4, 2).SetCastleQueen())
+			movesSlice.Append(move.New(common.King, 4, 2).SetCastleQueen())
 		}
 	}
 
 	if b.turn == common.Black && b.colors[common.Black]&b.pieces[common.King] == 0x1000000000000000 {
 		if 0x7000000000000000&oppAttack == 0 && b.castling[2] && 0x6000000000000000&all == 0 {
-			*movesSlice = append(*movesSlice, move.New(common.King, 60, 62).SetCastleKing())
+			movesSlice.Append(move.New(common.King, 60, 62).SetCastleKing())
 		}
 
 		if 0x1c00000000000000&oppAttack == 0 && b.castling[3] && 0x0e00000000000000&all == 0 {
-			*movesSlice = append(*movesSlice, move.New(common.King, 60, 58).SetCastleQueen())
+			movesSlice.Append(move.New(common.King, 60, 58).SetCastleQueen())
 		}
 	}
 

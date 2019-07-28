@@ -2,23 +2,28 @@ package board
 
 import (
 	"github.com/schafer14/chess/common"
-	"github.com/schafer14/chess/move"
 )
 
 // Moves generates a list of legal moves in a position
-func (b Board) Moves() []move.Move32 {
+func (b Board) Moves() (moves MoveList) {
 	// TODO optimise this when there is interent
-	moves := make([]move.Move32, 0, 256)
+	var ml MoveList
+	b.PsudoMoves(&ml)
 
-	for _, move := range b.PsudoMoves() {
+	for {
 		// Optimsie this when the undo move func is done
+		hasNext, move := ml.Next()
+		if !hasNext {
+			break
+		}
+
 		test := b.Clone()
 		test.Move(move)
 		king := test.colors[test.opp()] & test.pieces[common.King]
 		oppAttack := test.attackSpace(test.turn)
 
 		if oppAttack&king == 0 {
-			moves = append(moves, move)
+			moves.Append(move)
 		}
 	}
 
@@ -26,17 +31,13 @@ func (b Board) Moves() []move.Move32 {
 }
 
 // Generates a list of moves without checking for moving into check
-func (b Board) PsudoMoves() []move.Move32 {
-	moves := make([]move.Move32, 0, 256)
-
-	b.pawnMoves(&moves)
-	b.knightMoves(&moves)
-	b.bishopMoves(&moves)
-	b.rookMoves(&moves)
-	b.queenMoves(&moves)
-	b.kingMoves(&moves)
-
-	return moves
+func (b Board) PsudoMoves(ml *MoveList) {
+	b.pawnMoves(ml)
+	b.knightMoves(ml)
+	b.bishopMoves(ml)
+	b.rookMoves(ml)
+	b.queenMoves(ml)
+	b.kingMoves(ml)
 }
 
 // Clone duplicates a chess board.

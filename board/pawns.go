@@ -5,14 +5,14 @@ import (
 	"github.com/schafer14/chess/move"
 )
 
-func promote(move move.Move32, moves *[]move.Move32) {
-	*moves = append(*moves, move.SetPromo(common.Queen))
-	*moves = append(*moves, move.SetPromo(common.Knight))
-	*moves = append(*moves, move.SetPromo(common.Rook))
-	*moves = append(*moves, move.SetPromo(common.Bishop))
+func promote(move move.Move32, moves *MoveList) {
+	moves.Append(move.SetPromo(common.Queen))
+	moves.Append(move.SetPromo(common.Knight))
+	moves.Append(move.SetPromo(common.Rook))
+	moves.Append(move.SetPromo(common.Bishop))
 }
 
-func (b Board) pawnMoves(moves *[]move.Move32) {
+func (b Board) pawnMoves(moves *MoveList) {
 	opp := b.colors[b.opp()] | (1 << b.enPassant)
 	friendlies := b.colors[b.turn]
 	pawns := b.pieces[common.Pawn] & friendlies
@@ -27,27 +27,27 @@ func (b Board) pawnMoves(moves *[]move.Move32) {
 			if source+8 >= 56 {
 				promote(move.PawnQuiet(source, source+8), moves)
 			} else {
-				*moves = append(*moves, move.PawnQuiet(source, source+8))
+				moves.Append(move.PawnQuiet(source, source+8))
 			}
 		}
 
 		// Forward 2
 		for sourceBB := pawns & (empty >> 8) & (empty >> 16) & common.Row2; sourceBB != 0; sourceBB &= sourceBB - 1 {
 			source := common.FirstOne(sourceBB)
-			*moves = append(*moves, move.PawnQuiet(source, source+16))
+			moves.Append(move.PawnQuiet(source, source+16))
 		}
 
 		// Cap Right
 		for sourceBB := pawns & (^common.ColH) & (opp >> 9); sourceBB != 0; sourceBB &= sourceBB - 1 {
 			source := common.FirstOne(sourceBB)
 			if source+9 == b.enPassant {
-				*moves = append(*moves, move.PawnQuiet(source, source+9).SetCap(source+1, common.Pawn))
+				moves.Append(move.PawnQuiet(source, source+9).SetCap(source+1, common.Pawn))
 			} else {
 				_, piece := b.pieceOn(source + 9)
 				if source+9 >= 56 {
 					promote(move.PawnQuiet(source, source+9).SetCap(source+9, piece), moves)
 				} else {
-					*moves = append(*moves, move.PawnQuiet(source, source+9).SetCap(source+9, piece))
+					moves.Append(move.PawnQuiet(source, source+9).SetCap(source+9, piece))
 				}
 			}
 		}
@@ -56,13 +56,13 @@ func (b Board) pawnMoves(moves *[]move.Move32) {
 		for sourceBB := pawns & (^common.ColA) & (opp >> 7); sourceBB != 0; sourceBB &= sourceBB - 1 {
 			source := common.FirstOne(sourceBB)
 			if source+7 == b.enPassant {
-				*moves = append(*moves, move.PawnQuiet(source, source+7).SetCap(source-1, common.Pawn))
+				moves.Append(move.PawnQuiet(source, source+7).SetCap(source-1, common.Pawn))
 			} else {
 				_, piece := b.pieceOn(source + 7)
 				if source+7 >= 56 {
 					promote(move.PawnQuiet(source, source+7).SetCap(source+7, piece), moves)
 				} else {
-					*moves = append(*moves, move.PawnQuiet(source, source+7).SetCap(source+7, piece))
+					moves.Append(move.PawnQuiet(source, source+7).SetCap(source+7, piece))
 				}
 			}
 		}
@@ -76,14 +76,14 @@ func (b Board) pawnMoves(moves *[]move.Move32) {
 			if source-8 <= 7 {
 				promote(move.PawnQuiet(source, source-8), moves)
 			} else {
-				*moves = append(*moves, move.PawnQuiet(source, source-8))
+				moves.Append(move.PawnQuiet(source, source-8))
 			}
 		}
 
 		// Forward 2
 		for sourceBB := pawns & (empty << 8) & (empty << 16) & common.Row7; sourceBB != 0; sourceBB &= sourceBB - 1 {
 			source := common.FirstOne(sourceBB)
-			*moves = append(*moves, move.PawnQuiet(source, source-16))
+			moves.Append(move.PawnQuiet(source, source-16))
 		}
 
 		// Cap Left
@@ -91,13 +91,13 @@ func (b Board) pawnMoves(moves *[]move.Move32) {
 			source := common.FirstOne(sourceBB)
 			if source-7 == b.enPassant {
 				_, piece := b.pieceOn(source + 1)
-				*moves = append(*moves, move.PawnQuiet(source, source-7).SetCap(source+1, piece))
+				moves.Append(move.PawnQuiet(source, source-7).SetCap(source+1, piece))
 			} else {
 				_, piece := b.pieceOn(source - 7)
 				if source-7 <= 7 {
 					promote(move.PawnQuiet(source, source-7).SetCap(source-7, piece), moves)
 				} else {
-					*moves = append(*moves, move.PawnQuiet(source, source-7).SetCap(source-7, piece))
+					moves.Append(move.PawnQuiet(source, source-7).SetCap(source-7, piece))
 				}
 			}
 		}
@@ -107,13 +107,13 @@ func (b Board) pawnMoves(moves *[]move.Move32) {
 			source := common.FirstOne(sourceBB)
 			if source-9 == b.enPassant {
 				_, piece := b.pieceOn(source - 1)
-				*moves = append(*moves, move.PawnQuiet(source, source-9).SetCap(source-1, piece))
+				moves.Append(move.PawnQuiet(source, source-9).SetCap(source-1, piece))
 			} else {
 				_, piece := b.pieceOn(source - 9)
 				if source-9 <= 7 {
 					promote(move.PawnQuiet(source, source-9).SetCap(source-9, piece), moves)
 				} else {
-					*moves = append(*moves, move.PawnQuiet(source, source-9).SetCap(source-9, piece))
+					moves.Append(move.PawnQuiet(source, source-9).SetCap(source-9, piece))
 				}
 			}
 		}

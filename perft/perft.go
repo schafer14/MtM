@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/pkg/profile"
 	"github.com/schafer14/chess/board"
 	"github.com/schafer14/chess/move"
 )
@@ -31,22 +30,12 @@ type divideOutput struct {
 }
 
 func main() {
-	// P()
-
-	defer profile.Start(profile.CPUProfile).Stop()
-	t := time.Now()
+	t1 := time.Now()
 	x := Perft(board.FromFen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1"), 5)
-	e := time.Since(t)
-	fmt.Printf("perft: %v, time: %v\nn/s: %f\n", x, e, float64(x)/e.Seconds())
-	// errors := roceCmp(position{fen: "startpos"}, 6)
+	e := time.Since(t1)
+	fmt.Printf("perft: %v, time: %v\nn/s: %v\n", x, e, float64(x)/e.Seconds())
 
-	// for _, err := range errors {
-	// 	fmt.Println(err)
-	// }
-
-	// if len(errors) == 0 {
-	// 	fmt.Println("No errors")
-	// }
+	P()
 }
 
 func (de divideOutput) String() (str string) {
@@ -134,8 +123,13 @@ func divide(b board.Board, depth int) divideOutput {
 
 func divideRecursive(b board.Board, depth int) []moveCount {
 	moves := make([]moveCount, 0, 256)
+	ml := b.Moves()
 
-	for _, move := range b.Moves() {
+	for {
+		hasNext, move := ml.Next()
+		if !hasNext {
+			break
+		}
 		nb := b.Clone()
 		nb.Move(move)
 		moves = append(moves, moveCount{move: move, count: Perft(nb, depth-1)})
@@ -150,11 +144,16 @@ func Perft(b board.Board, depth int) int {
 	}
 
 	if depth == 1 {
-		return len(b.Moves())
+		return b.Moves().Len()
 	}
 
 	count := 0
-	for _, move := range b.Moves() {
+	ml := b.Moves()
+	for {
+		hasNext, move := ml.Next()
+		if !hasNext {
+			break
+		}
 		nb := b.Clone()
 		nb.Move(move)
 		count += Perft(nb, depth-1)

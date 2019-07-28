@@ -2,8 +2,6 @@ package board
 
 import (
 	"testing"
-
-	"github.com/schafer14/chess/move"
 )
 
 type bishopTest struct {
@@ -36,21 +34,39 @@ var bishopTests []bishopTest = []bishopTest{
 
 func TestBishopMoves(t *testing.T) {
 	for _, tt := range bishopTests {
-		var moves []move.Move32
+		var ms MoveList
 		board := FromFen(tt.fen)
 
-		board.bishopMoves(&moves)
+		ms.Reset()
+		board.bishopMoves(&ms)
 
-		if len(moves) != tt.numMoves {
-			t.Errorf("%v expected %v bishop moves but got %v", tt.fen, tt.numMoves, len(moves))
+		if ms.Len() != tt.numMoves {
+			t.Errorf("%v expected %v bishop moves but got %v", tt.fen, tt.numMoves, ms.Len())
 		}
 	}
 }
 
 func BenchmarkBishopMoves(b *testing.B) {
-	var moves []move.Move32
+	var ms MoveList
 	board := FromFen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1")
 	for i := 0; i < b.N; i++ {
-		board.bishopMoves(&moves)
+		ms.Reset()
+		board.bishopMoves(&ms)
+	}
+}
+
+func BenchmarkBishopAttacks(b *testing.B) {
+	var ms MoveList
+	board := FromFen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1")
+	for i := 0; i < b.N; i++ {
+		ms.Reset()
+		board.bishopAttacks(0)
+	}
+}
+
+func BenchmarkAttackSpace(b *testing.B) {
+	board := FromFen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1")
+	for i := 0; i < b.N; i++ {
+		board.attackSpace(0)
 	}
 }

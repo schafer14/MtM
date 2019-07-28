@@ -104,7 +104,11 @@ func (b Board) MoveFromSrcDestNotation(moveStr string) (move.Move32, error) {
 
 	moves := b.Moves()
 	isLegal := false
-	for _, legalMove := range moves {
+	for {
+		hasNext, legalMove := moves.Next()
+		if !hasNext {
+			break
+		}
 		if uint32(move) == uint32(legalMove) {
 			isLegal = true
 			break

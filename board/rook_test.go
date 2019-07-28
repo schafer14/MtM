@@ -2,8 +2,6 @@ package board
 
 import (
 	"testing"
-
-	"github.com/schafer14/chess/move"
 )
 
 type rookTest struct {
@@ -40,13 +38,14 @@ var rookTests []rookTest = []rookTest{
 
 func TestRookMoves(t *testing.T) {
 	for _, tt := range rookTests {
-		var moves []move.Move32
+		var moves MoveList
 		board := FromFen(tt.fen)
 
+		moves.Reset()
 		board.rookMoves(&moves)
 
-		if len(moves) != tt.numMoves {
-			t.Errorf("%v expected %v rook moves but got %v", tt.fen, tt.numMoves, len(moves))
+		if moves.Len() != tt.numMoves {
+			t.Errorf("%v expected %v rook moves but got %v", tt.fen, tt.numMoves, moves.Len())
 		}
 	}
 }

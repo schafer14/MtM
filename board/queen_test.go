@@ -2,8 +2,6 @@ package board
 
 import (
 	"testing"
-
-	"github.com/schafer14/chess/move"
 )
 
 type queenTest struct {
@@ -40,13 +38,14 @@ var queenTests []queenTest = []queenTest{
 
 func TestQueenMoves(t *testing.T) {
 	for _, tt := range queenTests {
-		var moves []move.Move32
+		var moves MoveList
 		board := FromFen(tt.fen)
+		moves.Reset()
 
 		board.queenMoves(&moves)
 
-		if len(moves) != tt.numMoves {
-			t.Errorf("%v expected %v queen moves but got %v", tt.fen, tt.numMoves, len(moves))
+		if moves.Len() != tt.numMoves {
+			t.Errorf("%v expected %v queen moves but got %v", tt.fen, tt.numMoves, moves.Len())
 		}
 	}
 }

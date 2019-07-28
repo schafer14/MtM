@@ -5,19 +5,17 @@ import (
 	"github.com/schafer14/chess/move"
 )
 
-func (b Board) bishopMoves(movesSlice *[]move.Move32) {
+func (b Board) bishopMoves(movesSlice *MoveList) {
 	occ := b.colors[0] | b.colors[1]
 	friendlies := b.colors[b.turn]
 	allBishops := b.pieces[common.Bishop] & friendlies
-	bishopMover := move.Mover(common.Bishop)
 
 	for bishops := allBishops; bishops != 0; bishops &= bishops - 1 {
-		squareNum := common.FirstOne(bishops)
-		mover, capMover := bishopMover(squareNum)
+		src := common.FirstOne(bishops)
 
-		blocker := occ & bishopMagic[squareNum].mask
-		index := (blocker * bishopMagic[squareNum].magic) >> 55
-		moves := bishopMagicMoves[squareNum][index]
+		blocker := occ & bishopMagic[src].mask
+		index := (blocker * bishopMagic[src].magic) >> 55
+		moves := bishopMagicMoves[src][index]
 
 		allLegalMoves := moves & ^friendlies
 
@@ -25,9 +23,9 @@ func (b Board) bishopMoves(movesSlice *[]move.Move32) {
 			dest := common.FirstOne(legalMoves)
 			isCap, capPiece := b.pieceOn(dest)
 			if isCap {
-				*movesSlice = append(*movesSlice, capMover(dest, capPiece))
+				movesSlice.Append(move.Move32(src | dest<<6 | common.Bishop<<13 | capPiece<<16 | dest<<19 | 1<<25))
 			} else {
-				*movesSlice = append(*movesSlice, mover(dest))
+				movesSlice.Append(move.Move32(src | dest<<6 | common.Bishop<<13))
 			}
 		}
 

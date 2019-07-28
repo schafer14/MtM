@@ -5,7 +5,7 @@ import (
 	"github.com/schafer14/chess/move"
 )
 
-func (b Board) rookMoves(movesSlice *[]move.Move32) {
+func (b Board) rookMoves(movesSlice *MoveList) {
 	occ := b.colors[0] | b.colors[1]
 	friendlies := b.colors[b.turn]
 	allRooks := b.pieces[common.Rook] & friendlies
@@ -25,9 +25,9 @@ func (b Board) rookMoves(movesSlice *[]move.Move32) {
 			dest := common.FirstOne(legalMoves)
 			isCap, capPiece := b.pieceOn(dest)
 			if isCap {
-				*movesSlice = append(*movesSlice, capMover(dest, capPiece))
+				movesSlice.Append(capMover(dest, capPiece))
 			} else {
-				*movesSlice = append(*movesSlice, mover(dest))
+				movesSlice.Append(mover(dest))
 			}
 		}
 

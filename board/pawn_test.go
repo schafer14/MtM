@@ -2,8 +2,6 @@ package board
 
 import (
 	"testing"
-
-	"github.com/schafer14/chess/move"
 )
 
 type pawnTest struct {
@@ -91,13 +89,14 @@ var pawnTests []pawnTest = []pawnTest{
 
 func TestPawnMoves(t *testing.T) {
 	for _, tt := range pawnTests {
-		var moves []move.Move32
+		var moves MoveList
 		board := FromFen(tt.fen)
+		moves.Reset()
 
 		board.pawnMoves(&moves)
 
-		if len(moves) != tt.numMoves {
-			t.Errorf("%v expected %v pawn moves but got %v", tt.fen, tt.numMoves, len(moves))
+		if moves.Len() != tt.numMoves {
+			t.Errorf("%v expected %v pawn moves but got %v", tt.fen, tt.numMoves, moves.Len())
 		}
 	}
 }
