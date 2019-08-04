@@ -29,28 +29,28 @@ func fromFen(fen string) Board {
 				continue
 			}
 			if char >= 'A' && char <= 'Z' {
-				board.colors[common.White] |= square
+				board.Colors[common.White] |= square
 			}
 			if char >= 'a' && char <= 'z' {
-				board.colors[common.Black] |= square
+				board.Colors[common.Black] |= square
 			}
 			if char == 'p' || char == 'P' {
-				board.pieces[common.Pawn] |= square
+				board.Pieces[common.Pawn] |= square
 			}
 			if char == 'n' || char == 'N' {
-				board.pieces[common.Knight] |= square
+				board.Pieces[common.Knight] |= square
 			}
 			if char == 'b' || char == 'B' {
-				board.pieces[common.Bishop] |= square
+				board.Pieces[common.Bishop] |= square
 			}
 			if char == 'r' || char == 'R' {
-				board.pieces[common.Rook] |= square
+				board.Pieces[common.Rook] |= square
 			}
 			if char == 'q' || char == 'Q' {
-				board.pieces[common.Queen] |= square
+				board.Pieces[common.Queen] |= square
 			}
 			if char == 'k' || char == 'K' {
-				board.pieces[common.King] |= square
+				board.Pieces[common.King] |= square
 			}
 			n++
 		}
@@ -58,7 +58,7 @@ func fromFen(fen string) Board {
 
 	// Set color
 	if parts[1] == "b" {
-		board.turn = common.Black
+		board.Turn = common.Black
 	}
 
 	// castle privileges
@@ -92,7 +92,7 @@ func squareToNum(n string) uint {
 
 func (b Board) String() string {
 	var fen string
-	all := b.colors[common.White] | b.colors[common.Black]
+	all := b.Colors[common.White] | b.Colors[common.Black]
 
 	for row := 7; row >= 0; row-- {
 		empty := 0
@@ -108,40 +108,40 @@ func (b Board) String() string {
 					empty = 0
 				}
 
-				if square&b.colors[common.White]&b.pieces[common.Pawn] > 0 {
+				if square&b.Colors[common.White]&b.Pieces[common.Pawn] > 0 {
 					fen += "P"
 				}
-				if square&b.colors[common.White]&b.pieces[common.Knight] > 0 {
+				if square&b.Colors[common.White]&b.Pieces[common.Knight] > 0 {
 					fen += "N"
 				}
-				if square&b.colors[common.White]&b.pieces[common.Bishop] > 0 {
+				if square&b.Colors[common.White]&b.Pieces[common.Bishop] > 0 {
 					fen += "B"
 				}
-				if square&b.colors[common.White]&b.pieces[common.Rook] > 0 {
+				if square&b.Colors[common.White]&b.Pieces[common.Rook] > 0 {
 					fen += "R"
 				}
-				if square&b.colors[common.White]&b.pieces[common.Queen] > 0 {
+				if square&b.Colors[common.White]&b.Pieces[common.Queen] > 0 {
 					fen += "Q"
 				}
-				if square&b.colors[common.White]&b.pieces[common.King] > 0 {
+				if square&b.Colors[common.White]&b.Pieces[common.King] > 0 {
 					fen += "K"
 				}
-				if square&b.colors[common.Black]&b.pieces[common.Pawn] > 0 {
+				if square&b.Colors[common.Black]&b.Pieces[common.Pawn] > 0 {
 					fen += "p"
 				}
-				if square&b.colors[common.Black]&b.pieces[common.Knight] > 0 {
+				if square&b.Colors[common.Black]&b.Pieces[common.Knight] > 0 {
 					fen += "n"
 				}
-				if square&b.colors[common.Black]&b.pieces[common.Bishop] > 0 {
+				if square&b.Colors[common.Black]&b.Pieces[common.Bishop] > 0 {
 					fen += "b"
 				}
-				if square&b.colors[common.Black]&b.pieces[common.Rook] > 0 {
+				if square&b.Colors[common.Black]&b.Pieces[common.Rook] > 0 {
 					fen += "r"
 				}
-				if square&b.colors[common.Black]&b.pieces[common.Queen] > 0 {
+				if square&b.Colors[common.Black]&b.Pieces[common.Queen] > 0 {
 					fen += "q"
 				}
-				if square&b.colors[common.Black]&b.pieces[common.King] > 0 {
+				if square&b.Colors[common.Black]&b.Pieces[common.King] > 0 {
 					fen += "k"
 				}
 			}
@@ -154,7 +154,7 @@ func (b Board) String() string {
 		}
 	}
 
-	if b.turn == common.White {
+	if b.Turn == common.White {
 		fen += " w "
 	} else {
 		fen += " b "

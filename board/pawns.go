@@ -13,14 +13,14 @@ func promote(move move.Move32, moves *MoveList) {
 }
 
 func (b Board) pawnMoves(moves *MoveList) {
-	opp := b.colors[b.opp()] | (1 << b.enPassant)
-	friendlies := b.colors[b.turn]
-	pawns := b.pieces[common.Pawn] & friendlies
-	all := b.colors[0] | b.colors[1]
+	opp := b.Colors[b.opp()] | (1 << b.enPassant)
+	friendlies := b.Colors[b.Turn]
+	pawns := b.Pieces[common.Pawn] & friendlies
+	all := b.Colors[0] | b.Colors[1]
 	empty := ^all
 
 	// White
-	if b.turn == common.White {
+	if b.Turn == common.White {
 		// Forward 1
 		for sourceBB := pawns & (empty >> 8); sourceBB != 0; sourceBB &= sourceBB - 1 {
 			source := common.FirstOne(sourceBB)
@@ -69,7 +69,7 @@ func (b Board) pawnMoves(moves *MoveList) {
 	}
 
 	// Black
-	if b.turn == common.Black {
+	if b.Turn == common.Black {
 		// Forward 1
 		for sourceBB := pawns & (empty << 8); sourceBB != 0; sourceBB &= sourceBB - 1 {
 			source := common.FirstOne(sourceBB)
@@ -122,7 +122,7 @@ func (b Board) pawnMoves(moves *MoveList) {
 }
 
 func (b Board) pawnAttacks(turn uint) (attackSpace uint64) {
-	pawns := b.pieces[common.Pawn] & b.colors[turn]
+	pawns := b.Pieces[common.Pawn] & b.Colors[turn]
 
 	if turn == common.Black {
 		attackSpace |= (pawns >> 9 & ^common.ColH)
@@ -135,4 +135,5 @@ func (b Board) pawnAttacks(turn uint) (attackSpace uint64) {
 	}
 
 	return attackSpace
+
 }

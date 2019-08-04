@@ -74,12 +74,12 @@ func (b Board) MoveFromSrcDestNotation(moveStr string) (move.Move32, error) {
 		move = move.SetCap(destSquare, capPiece)
 	}
 
-	if piece == common.Pawn && b.turn == common.White && b.enPassant == destSquare-8 {
+	if piece == common.Pawn && b.Turn == common.White && b.enPassant == destSquare-8 {
 		isCap, capPiece = b.pieceOn(destSquare - 8)
 		move = move.SetCap(destSquare-8, capPiece)
 	}
 
-	if piece == common.Pawn && b.turn == common.Black && b.enPassant == destSquare+8 {
+	if piece == common.Pawn && b.Turn == common.Black && b.enPassant == destSquare+8 {
 		isCap, capPiece = b.pieceOn(destSquare + 8)
 		move = move.SetCap(destSquare+8, capPiece)
 	}

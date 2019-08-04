@@ -6,18 +6,16 @@ import (
 )
 
 func (b Board) rookMoves(movesSlice *MoveList) {
-	occ := b.colors[0] | b.colors[1]
-	friendlies := b.colors[b.turn]
-	allRooks := b.pieces[common.Rook] & friendlies
-	rookMover := move.Mover(common.Rook)
+	occ := b.Colors[0] | b.Colors[1]
+	friendlies := b.Colors[b.Turn]
+	allRooks := b.Pieces[common.Rook] & friendlies
 
 	for rooks := allRooks; rooks != 0; rooks &= rooks - 1 {
-		squareNum := common.FirstOne(rooks)
-		mover, capMover := rookMover(squareNum)
+		src := common.FirstOne(rooks)
 
-		blocker := occ & rookMagic[squareNum].mask
-		index := (blocker * rookMagic[squareNum].magic) >> 52
-		moves := rookMagicMoves[squareNum][index]
+		blocker := occ & rookMagic[src].mask
+		index := (blocker * rookMagic[src].magic) >> 52
+		moves := rookMagicMoves[src][index]
 
 		allLegalMoves := moves & ^friendlies
 
@@ -25,9 +23,9 @@ func (b Board) rookMoves(movesSlice *MoveList) {
 			dest := common.FirstOne(legalMoves)
 			isCap, capPiece := b.pieceOn(dest)
 			if isCap {
-				movesSlice.Append(capMover(dest, capPiece))
+				movesSlice.Append(move.Move32(src | dest<<6 | common.Rook<<13 | capPiece<<16 | dest<<19 | 1<<25))
 			} else {
-				movesSlice.Append(mover(dest))
+				movesSlice.Append(move.Move32(src | dest<<6 | common.Rook<<13))
 			}
 		}
 
@@ -36,9 +34,9 @@ func (b Board) rookMoves(movesSlice *MoveList) {
 }
 
 func (b Board) rookAttacks(turn uint) (attackSpace uint64) {
-	occ := b.colors[0] | b.colors[1]
-	friendlies := b.colors[turn]
-	allRooks := b.pieces[common.Rook] & friendlies
+	occ := b.Colors[0] | b.Colors[1]
+	friendlies := b.Colors[turn]
+	allRooks := b.Pieces[common.Rook] & friendlies
 
 	for rooks := allRooks; rooks != 0; rooks &= rooks - 1 {
 		squareNum := common.FirstOne(rooks)

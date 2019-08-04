@@ -35,7 +35,7 @@ func main() {
 	e := time.Since(t1)
 	fmt.Printf("perft: %v, time: %v\nn/s: %v\n", x, e, float64(x)/e.Seconds())
 
-	P()
+	// P()
 }
 
 func (de divideOutput) String() (str string) {
@@ -123,15 +123,20 @@ func divide(b board.Board, depth int) divideOutput {
 
 func divideRecursive(b board.Board, depth int) []moveCount {
 	moves := make([]moveCount, 0, 256)
-	ml := b.Moves()
+	var ml board.MoveList
+	var nb board.Board
+	b.PsudoMoves(&ml)
 
 	for {
 		hasNext, move := ml.Next()
 		if !hasNext {
 			break
 		}
-		nb := b.Clone()
+		nb = b
 		nb.Move(move)
+		if nb.IsInCheck(nb.Opp()) {
+			continue
+		}
 		moves = append(moves, moveCount{move: move, count: Perft(nb, depth-1)})
 	}
 
@@ -148,14 +153,19 @@ func Perft(b board.Board, depth int) int {
 	}
 
 	count := 0
-	ml := b.Moves()
+	var ml board.MoveList
+	var nb board.Board
+	b.PsudoMoves(&ml)
 	for {
 		hasNext, move := ml.Next()
 		if !hasNext {
 			break
 		}
-		nb := b.Clone()
+		nb = b
 		nb.Move(move)
+		if nb.IsInCheck(nb.Opp()) {
+			continue
+		}
 		count += Perft(nb, depth-1)
 	}
 

@@ -6,33 +6,31 @@ import (
 )
 
 func (b Board) kingMoves(movesSlice *MoveList) {
-	friendlies := b.colors[b.turn]
-	allKings := b.pieces[common.King] & friendlies
-	kingMover := move.Mover(common.King)
+	friendlies := b.Colors[b.Turn]
+	allKings := b.Pieces[common.King] & friendlies
 	oppAttack := b.attackSpace(b.opp())
-	all := (friendlies | b.colors[b.opp()])
+	all := (friendlies | b.Colors[b.opp()])
 
 	for kings := allKings; kings != 0; kings &= kings - 1 {
-		squareNum := common.FirstOne(kings)
-		mover, capMover := kingMover(squareNum)
+		src := common.FirstOne(kings)
 
-		moves := kingAttacks[squareNum]
+		moves := kingAttacks[src]
 		legalMoves := moves & ^friendlies
 
 		for ; legalMoves != 0; legalMoves &= legalMoves - 1 {
 			dest := common.FirstOne(legalMoves)
 			isCap, capPiece := b.pieceOn(dest)
 			if isCap {
-				movesSlice.Append(capMover(dest, capPiece))
+				movesSlice.Append(move.Move32(src | dest<<6 | common.King<<13 | capPiece<<16 | dest<<19 | 1<<25))
 			} else {
-				movesSlice.Append(mover(dest))
+				movesSlice.Append(move.Move32(src | dest<<6 | common.King<<13))
 			}
 		}
 
 	}
 
 	// Castle White does not work for chess 960
-	if b.turn == common.White && b.colors[common.White]&b.pieces[common.King] == 0x10 {
+	if b.Turn == common.White && b.Colors[common.White]&b.Pieces[common.King] == 0x10 {
 		if 0x70&oppAttack == 0 && b.castling[0] && all&0x60 == 0 {
 			movesSlice.Append(move.New(common.King, 4, 6).SetCastleKing())
 		}
@@ -42,7 +40,7 @@ func (b Board) kingMoves(movesSlice *MoveList) {
 		}
 	}
 
-	if b.turn == common.Black && b.colors[common.Black]&b.pieces[common.King] == 0x1000000000000000 {
+	if b.Turn == common.Black && b.Colors[common.Black]&b.Pieces[common.King] == 0x1000000000000000 {
 		if 0x7000000000000000&oppAttack == 0 && b.castling[2] && 0x6000000000000000&all == 0 {
 			movesSlice.Append(move.New(common.King, 60, 62).SetCastleKing())
 		}
@@ -55,8 +53,8 @@ func (b Board) kingMoves(movesSlice *MoveList) {
 }
 
 func (b Board) kingAttacks(turn uint) (attackSpace uint64) {
-	friendlies := b.colors[turn]
-	allKings := b.pieces[common.King] & friendlies
+	friendlies := b.Colors[turn]
+	allKings := b.Pieces[common.King] & friendlies
 
 	for kings := allKings; kings != 0; kings &= kings - 1 {
 		squareNum := common.FirstOne(kings)

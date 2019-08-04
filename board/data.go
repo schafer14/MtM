@@ -34,9 +34,9 @@ func (m *MoveList) Reset() {
 }
 
 type Board struct {
-	pieces    [6]uint64
-	colors    [2]uint64
-	turn      uint
+	Pieces    [6]uint64
+	Colors    [2]uint64
+	Turn      uint
 	castling  [4]bool
 	enPassant uint
 }
@@ -44,10 +44,10 @@ type Board struct {
 var cols = []string{"a", "b", "c", "d", "e", "f", "g", "h"}
 
 var initialBoard Board = Board{
-	turn:      common.White,
+	Turn:      common.White,
 	castling:  [4]bool{true, true, true, true},
 	enPassant: 0,
-	pieces: [6]uint64{
+	Pieces: [6]uint64{
 		0x00FF00000000FF00,
 		0x4200000000000042,
 		0x2400000000000024,
@@ -55,7 +55,7 @@ var initialBoard Board = Board{
 		0x0800000000000008,
 		0x1000000000000010,
 	},
-	colors: [2]uint64{
+	Colors: [2]uint64{
 		0xFFFF,
 		0xFFFF000000000000,
 	},

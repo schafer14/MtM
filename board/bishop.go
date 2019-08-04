@@ -6,9 +6,9 @@ import (
 )
 
 func (b Board) bishopMoves(movesSlice *MoveList) {
-	occ := b.colors[0] | b.colors[1]
-	friendlies := b.colors[b.turn]
-	allBishops := b.pieces[common.Bishop] & friendlies
+	occ := b.Colors[0] | b.Colors[1]
+	friendlies := b.Colors[b.Turn]
+	allBishops := b.Pieces[common.Bishop] & friendlies
 
 	for bishops := allBishops; bishops != 0; bishops &= bishops - 1 {
 		src := common.FirstOne(bishops)
@@ -34,9 +34,9 @@ func (b Board) bishopMoves(movesSlice *MoveList) {
 }
 
 func (b Board) bishopAttacks(turn uint) (attackSpace uint64) {
-	occ := b.colors[0] | b.colors[1]
-	friendlies := b.colors[turn]
-	allBishops := b.pieces[common.Bishop] & friendlies
+	occ := b.Colors[0] | b.Colors[1]
+	friendlies := b.Colors[turn]
+	allBishops := b.Pieces[common.Bishop] & friendlies
 
 	for bishops := allBishops; bishops != 0; bishops &= bishops - 1 {
 		squareNum := common.FirstOne(bishops)

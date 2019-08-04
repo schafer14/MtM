@@ -6,19 +6,17 @@ import (
 )
 
 func (b Board) queenMoves(movesSlice *MoveList) {
-	occ := b.colors[0] | b.colors[1]
-	friendlies := b.colors[b.turn]
-	allQueens := b.pieces[common.Queen] & friendlies
-	queenMover := move.Mover(common.Queen)
+	occ := b.Colors[0] | b.Colors[1]
+	friendlies := b.Colors[b.Turn]
+	allQueens := b.Pieces[common.Queen] & friendlies
 
 	for Queens := allQueens; Queens != 0; Queens &= Queens - 1 {
-		squareNum := common.FirstOne(Queens)
-		mover, capMover := queenMover(squareNum)
+		src := common.FirstOne(Queens)
 
 		// Stright Moves
-		blocker := occ & rookMagic[squareNum].mask
-		index := (blocker * rookMagic[squareNum].magic) >> 52
-		moves := rookMagicMoves[squareNum][index]
+		blocker := occ & rookMagic[src].mask
+		index := (blocker * rookMagic[src].magic) >> 52
+		moves := rookMagicMoves[src][index]
 
 		allLegalMoves := moves & ^friendlies
 
@@ -26,16 +24,16 @@ func (b Board) queenMoves(movesSlice *MoveList) {
 			dest := common.FirstOne(legalMoves)
 			isCap, capPiece := b.pieceOn(dest)
 			if isCap {
-				movesSlice.Append(capMover(dest, capPiece))
+				movesSlice.Append(move.Move32(src | dest<<6 | common.Queen<<13 | capPiece<<16 | dest<<19 | 1<<25))
 			} else {
-				movesSlice.Append(mover(dest))
+				movesSlice.Append(move.Move32(src | dest<<6 | common.Queen<<13))
 			}
 		}
 
 		// Diagonal Moves
-		blocker2 := occ & bishopMagic[squareNum].mask
-		index2 := (blocker2 * bishopMagic[squareNum].magic) >> 55
-		moves2 := bishopMagicMoves[squareNum][index2]
+		blocker2 := occ & bishopMagic[src].mask
+		index2 := (blocker2 * bishopMagic[src].magic) >> 55
+		moves2 := bishopMagicMoves[src][index2]
 
 		allLegalMoves2 := moves2 & ^friendlies
 
@@ -43,9 +41,9 @@ func (b Board) queenMoves(movesSlice *MoveList) {
 			dest := common.FirstOne(legalMoves)
 			isCap, capPiece := b.pieceOn(dest)
 			if isCap {
-				movesSlice.Append(capMover(dest, capPiece))
+				movesSlice.Append(move.Move32(src | dest<<6 | common.Queen<<13 | capPiece<<16 | dest<<19 | 1<<25))
 			} else {
-				movesSlice.Append(mover(dest))
+				movesSlice.Append(move.Move32(src | dest<<6 | common.Queen<<13))
 			}
 		}
 
@@ -54,9 +52,9 @@ func (b Board) queenMoves(movesSlice *MoveList) {
 }
 
 func (b Board) queenAttacks(turn uint) (attackSpace uint64) {
-	occ := b.colors[0] | b.colors[1]
-	friendlies := b.colors[turn]
-	allQueens := b.pieces[common.Queen] & friendlies
+	occ := b.Colors[0] | b.Colors[1]
+	friendlies := b.Colors[turn]
+	allQueens := b.Pieces[common.Queen] & friendlies
 
 	for Queens := allQueens; Queens != 0; Queens &= Queens - 1 {
 		squareNum := common.FirstOne(Queens)
@@ -73,5 +71,4 @@ func (b Board) queenAttacks(turn uint) (attackSpace uint64) {
 	}
 
 	return attackSpace
-
 }
