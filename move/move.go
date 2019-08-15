@@ -3,7 +3,7 @@ package move
 import (
 	"fmt"
 
-	"github.com/schafer14/chess/common"
+	"github.com/schafer14/MtM/common"
 )
 
 // From least to most significant bytes

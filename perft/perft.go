@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/schafer14/chess/board"
-	"github.com/schafer14/chess/move"
+	"github.com/schafer14/MtM/board"
+	"github.com/schafer14/MtM/move"
 )
 
 const STARTPOS = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"

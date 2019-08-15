@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/schafer14/chess/common"
+	"github.com/schafer14/MtM/common"
 )
 
 // Create a board from a fen string

@@ -1,8 +1,8 @@
 package board
 
 import (
-	"github.com/schafer14/chess/common"
-	"github.com/schafer14/chess/move"
+	"github.com/schafer14/MtM/common"
+	"github.com/schafer14/MtM/move"
 )
 
 func (b Board) kingMoves(movesSlice *MoveList) {

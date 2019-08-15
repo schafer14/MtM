@@ -1,7 +1,7 @@
 package board
 
 import (
-	"github.com/schafer14/chess/common"
+	"github.com/schafer14/MtM/common"
 )
 
 // Moves generates a list of legal moves in a position

@@ -1,8 +1,8 @@
 package board
 
 import (
-	"github.com/schafer14/chess/common"
-	"github.com/schafer14/chess/move"
+	"github.com/schafer14/MtM/common"
+	"github.com/schafer14/MtM/move"
 )
 
 func promote(move move.Move32, moves *MoveList) {
