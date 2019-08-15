@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/schafer14/chess/board"
+	"github.com/schafer14/MtM/board"
 )
 
 func TestPeft(t *testing.T) {

@@ -3,12 +3,14 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"time"
 
 	"github.com/schafer14/MtM/board"
 	"github.com/schafer14/MtM/move"
+	"github.com/urfave/cli"
 )
 
 const STARTPOS = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
@@ -30,12 +32,78 @@ type divideOutput struct {
 }
 
 func main() {
-	t1 := time.Now()
-	x := Perft(board.FromFen("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1"), 5)
-	e := time.Since(t1)
-	fmt.Printf("perft: %v, time: %v\nn/s: %v\n", x, e, float64(x)/e.Seconds())
+	app := cli.NewApp()
+	app.Name = "MtM Perft Tool"
+	app.Usage = "perft, test"
+	app.Commands = []cli.Command{
+		{
+			Name:    "test",
+			Aliases: []string{"t"},
+			Usage:   "Run the test suite",
+			Action: func(c *cli.Context) error {
+				P()
+				return nil
+			},
+		},
+		{
+			Name:    "moves",
+			Aliases: []string{"m"},
+			Usage:   "Returns a list of moves in a position",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "pos, p",
+					Value: "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1",
+					Usage: "Position",
+				},
+			},
+			Action: func(c *cli.Context) error {
+				b := board.FromFen(c.String("pos"))
+				ml := b.Moves()
+				for {
+					hasNext, move := ml.Next()
 
-	// P()
+					if !hasNext {
+						break
+					}
+
+					fmt.Printf("%+v ", move)
+
+				}
+				return nil
+			},
+		},
+		{
+			Name:    "pos",
+			Aliases: []string{"p"},
+			Usage:   "Run the test on a single position",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "pos, p",
+					Value: "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1",
+					Usage: "Position to run tests against",
+				},
+				cli.IntFlag{
+					Name:  "depth, d",
+					Value: 5,
+					Usage: "Depth to test to",
+				},
+			},
+			Action: func(c *cli.Context) error {
+				fmt.Printf("board = %+v\ndepth = %+v\n", c.String("pos"), c.Int("depth"))
+				t1 := time.Now()
+				x := Perft(board.FromFen(c.String("pos")), c.Int("depth"))
+				e := time.Since(t1)
+				fmt.Printf("expanded = %+v\ntime: %+v\nn/s: %+v\n", x, e, float64(x)/e.Seconds())
+				return nil
+			},
+		},
+	}
+
+	err := app.Run(os.Args)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }
 
 func (de divideOutput) String() (str string) {
