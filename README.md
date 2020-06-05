@@ -12,6 +12,12 @@ There is currently only 1 move generation function that is applied for all posit
 of roughly 13 million moves per second on my laptop. You run this benchmark yourself using the
 perft command.
 
+## Usage
+
+MtM is currently structured as a CLI tool. Run it with `go run ./perft`. 
+
+If you would like to run the perft test suite you will need to have the roce38 program in your PATH environment.
+
 ## Future work
 
 - Performance (with an aim of expanding 40-50 million nps on my laptop: comparable to Roce38)
