@@ -84,7 +84,7 @@ func main() {
 				},
 				cli.IntFlag{
 					Name:  "depth, d",
-					Value: 5,
+					Value: 4,
 					Usage: "Depth to test to",
 				},
 			},
