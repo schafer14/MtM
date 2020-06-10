@@ -3,7 +3,7 @@ package move
 import (
 	"testing"
 
-	"github.com/schafer14/chess/common"
+	"github.com/schafer14/MtM/common"
 )
 
 func TestGenerate(t *testing.T) {

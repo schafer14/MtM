@@ -3,8 +3,8 @@ package board
 import (
 	"testing"
 
-	"github.com/schafer14/chess/common"
-	"github.com/schafer14/chess/move"
+	"github.com/schafer14/MtM/common"
+	"github.com/schafer14/MtM/move"
 )
 
 func TestMove(t *testing.T) {
