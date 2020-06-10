@@ -2,7 +2,23 @@ package board
 
 import (
 	"github.com/schafer14/MtM/common"
+	"github.com/schafer14/MtM/move"
 )
+
+func (b Board) IsLegal(m move.Move32) bool {
+	ml := b.Moves()
+	for {
+		// Optimsie this when the undo move func is done
+		hasNext, move := ml.Next()
+		if !hasNext {
+			return false
+		}
+
+		if m == move {
+			return true
+		}
+	}
+}
 
 // Moves generates a list of legal moves in a position
 
