@@ -93,7 +93,10 @@ func (b Board) pawnMoves(moves *MoveList) {
 				_, piece := b.pieceOn(source + 1)
 				moves.Append(move.PawnQuiet(source, source-7).SetCap(source+1, piece))
 			} else {
-				_, piece := b.pieceOn(source - 7)
+				hasPiece, piece := b.pieceOn(source - 7)
+				if !hasPiece {
+					continue
+				}
 				if source-7 <= 7 {
 					promote(move.PawnQuiet(source, source-7).SetCap(source-7, piece), moves)
 				} else {
@@ -105,11 +108,14 @@ func (b Board) pawnMoves(moves *MoveList) {
 		// Cap Right
 		for sourceBB := pawns & (^common.ColA) & (opp << 9); sourceBB != 0; sourceBB &= sourceBB - 1 {
 			source := common.FirstOne(sourceBB)
-			if source-9 == b.enPassant {
+			if source-9 == b.enPassant && b.enPassant != 0 {
 				_, piece := b.pieceOn(source - 1)
 				moves.Append(move.PawnQuiet(source, source-9).SetCap(source-1, piece))
 			} else {
-				_, piece := b.pieceOn(source - 9)
+				hasPiece, piece := b.pieceOn(source - 9)
+				if !hasPiece {
+					continue
+				}
 				if source-9 <= 7 {
 					promote(move.PawnQuiet(source, source-9).SetCap(source-9, piece), moves)
 				} else {
